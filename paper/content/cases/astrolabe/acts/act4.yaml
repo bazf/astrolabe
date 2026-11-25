@@ -1,0 +1,304 @@
+# Акт 4 «Вежа» і фінал. Числа — з tools/solve.mjs: ledger.total2026 103000 / totalAll 316000,
+# safe.trainee 1647 / safe 161174, cipher.trainee / cipher.detective.
+# Шлюз D (у біблії — «Г») = сейф: він фізично відкриває конверт Г. Шифр (З-11) — окрема задача фіналу.
+
+tasks:
+  - id: Z6
+    label: З-6
+    depts: [A]
+    title: "@task.z6.title"
+    visibleWhen: { unlocked: "section:C" }
+    question: { trainee: "@task.z6.q.trainee", detective: "@task.z6.q.detective" }
+    unit: грн
+    spec:
+      trainee: { kind: number, min: 103000, max: 103000, step: 1 }
+      detective: { kind: number, min: 316000, max: 316000, step: 1 }
+    hints:
+      trainee: ["@task.z6.h.trainee.1", "@task.z6.h.trainee.2", "@task.z6.h.trainee.3"]
+      detective: ["@task.z6.h.detective.1", "@task.z6.h.detective.2", "@task.z6.h.detective.3"]
+    onSolved: "@task.z6.solved"
+  - id: Z8
+    label: З-8
+    depts: [A, O]
+    title: "@task.z8.title"
+    visibleWhen: { unlocked: "section:C" }
+    question: { trainee: "@task.z8.q.trainee", detective: "@task.z8.q.detective" }
+    gate: D
+    lock: { after: 3, minutes: 5 }
+    spec:
+      trainee: { kind: number, min: 1647, max: 1647, step: 1 }
+      detective: { kind: number, min: 161174, max: 161174, step: 1 }
+    hints:
+      trainee: ["@task.z8.h.trainee.1", "@task.z8.h.trainee.2", "@task.z8.h.trainee.3"]
+      detective: ["@task.z8.h.detective.1", "@task.z8.h.detective.2", "@task.z8.h.detective.3"]
+  - id: Z11
+    label: З-11
+    depts: [A, O]
+    title: "@task.z11.title"
+    visibleWhen: { unlocked: "section:D" }
+    question: { trainee: "@task.z11.q.trainee", detective: "@task.z11.q.detective" }
+    spec:
+      trainee: { kind: choice, options: { south: [південний, південним, південь, південного] } }
+      detective: { kind: choice, options: { tower: [вежа, вежу, вежі, годинникова вежа, годинникову вежу] } }
+    hints:
+      trainee: ["@task.z11.h.trainee.1", "@task.z11.h.trainee.2", "@task.z11.h.trainee.3"]
+      detective: ["@task.z11.h.detective.1", "@task.z11.h.detective.2", "@task.z11.h.detective.3"]
+    onSolved: "@task.z11.solved"
+
+gates:
+  D: { task: Z8, payload: { message: "@gate.d.message", unlock: ["section:D"] } }
+
+decisions:
+  - id: R-SAFE
+    label: Ордер
+    prompt: "@rsafe.prompt"
+    context: "@rsafe.context"
+    available: { all: [{ unlocked: "section:C" }, { not: { solved: Z8 } }] }
+    options:
+      - id: warrant
+        label: "@rsafe.opt"
+        effects:
+          - { penaltyMin: 10 }
+          - { clearLock: Z8 }
+          - if: { level: trainee }
+            then: [{ message: "@rsafe.after.trainee" }]
+            else: [{ message: "@rsafe.after.detective" }]
+  - id: R8
+    label: Р8
+    prompt: "@r8.prompt"
+    context: "@r8.context"
+    available: { all: [{ unlocked: "section:C" }, { any: [{ flag: story_published }, { solved: Z6 }, { solved: Z7 }] }] }
+    options:
+      - id: a
+        label: "@r8.opt.a"
+        effects:
+          - { set: marta_deal, value: true }
+          - { unlock: C14 }
+          - { message: "@r8.after.a" }
+      - id: b
+        label: "@r8.opt.b"
+        effects:
+          - { set: marta_charged, value: true }
+          - { message: "@r8.after.b" }
+      - id: c
+        label: "@r8.opt.c"
+        effects:
+          - { message: "@r8.after.c" }
+  - id: R9
+    label: Операція
+    prompt: "@r9.prompt"
+    context: "@r9.context"
+    available: { any: [{ solved: Z11 }, { fired: E5 }] }
+    options:
+      - { id: tower, label: "@r9.opt.tower", effects: [{ set: op1, value: tower }, { set: op_done, value: true }, { message: "@r9.after" }] }
+      - { id: station, label: "@r9.opt.station", effects: [{ set: op1, value: station }, { set: op_done, value: true }, { message: "@r9.after" }] }
+      - { id: shop, label: "@r9.opt.shop", effects: [{ set: op1, value: shop }, { set: op_done, value: true }, { message: "@r9.after" }] }
+      - { id: home, label: "@r9.opt.home", effects: [{ set: op1, value: home }, { set: op_done, value: true }, { message: "@r9.after" }] }
+  - id: R9b
+    label: Друга група
+    prompt: "@r9b.prompt"
+    context: "@r9b.context"
+    available: { all: [{ flag: op_done }, { hintsAtMost: 3 }] }
+    options:
+      - { id: tower, label: "@r9.opt.tower", effects: [{ set: op2, value: tower }] }
+      - { id: station, label: "@r9.opt.station", effects: [{ set: op2, value: station }] }
+      - { id: shop, label: "@r9.opt.shop", effects: [{ set: op2, value: shop }] }
+      - { id: home, label: "@r9.opt.home", effects: [{ set: op2, value: home }] }
+
+events:
+  # Наслідок Р7-б («згодувати хибну інформацію»): Вейс іде в сховище вночі після шлюзу Б.
+  - id: E-TRAP
+    at: { afterGate: B }
+    requires: { flag: trap_set }
+    message: "@etrap.message"
+    effects:
+      - { set: veis_caught, value: true }
+      - { set: killer_alert, value: true }
+  - id: E-VEISPHONE
+    at: { afterGate: C }
+    requires: { flag: veis_caught }
+    message: "@eveisphone.message"
+    effects:
+      - { unlock: C12 }
+  - id: E-COURT
+    at: { afterGate: D }
+    requires: { flag: solomiya_refused }
+    message: "@ecourt.message"
+    effects:
+      - { unlock: C08 }
+  - id: E5
+    at: { minute: 85 }
+    message: "@e5.message"
+    decision: R9
+
+codes:
+  - { code: 490, action: { task: Z6 } }
+  - { code: 407, action: { task: Z8 } }
+  - { code: 492, action: { task: Z11 } }
+
+# Звинувачення — після операції; якщо команді доступна друга група, спершу рішення про неї.
+accusationOpen: { all: [{ flag: op_done }, { any: [{ flag: op2 }, { not: { hintsAtMost: 3 } }] }] }
+
+accusation:
+  - id: killer
+    prompt: "@acc.killer"
+    answer: prokopchuk
+    options:
+      - { id: prokopchuk, label: "@person.nelya" }
+      - { id: zgurska, label: "@person.marta" }
+      - { id: korzh, label: "@person.korzh" }
+      - { id: luhovyi, label: "@person.stepan" }
+      - { id: iryna, label: "@person.iryna" }
+      - { id: bayda, label: "@person.bayda" }
+      - { id: veis, label: "@person.veis" }
+      - { id: dorosh, label: "@person.dorosh" }
+      - { id: accident, label: "@acc.accident" }
+  - id: remover
+    prompt: "@acc.remover"
+    answer: hayovyi
+    options:
+      - { id: hayovyi, label: "@person.orest" }
+      - { id: korzh, label: "@person.korzh" }
+      - { id: prokopchuk, label: "@person.nelya" }
+      - { id: zgurska, label: "@person.marta" }
+      - { id: veis, label: "@person.veis" }
+      - { id: luhovyi, label: "@person.stepan" }
+  - id: place
+    prompt: "@acc.place"
+    answer: tower
+    options:
+      - { id: tower, label: "@acc.places.tower" }
+      - { id: storage, label: "@acc.places.storage" }
+      - { id: basement, label: "@acc.places.basement" }
+      - { id: shop, label: "@acc.places.shop" }
+      - { id: nelyaHome, label: "@acc.places.nelyaHome" }
+      - { id: sundial, label: "@acc.places.sundial" }
+      - { id: chapel, label: "@acc.places.chapel" }
+      - { id: abroad, label: "@acc.places.abroad" }
+  - id: organizer
+    prompt: "@acc.organizer"
+    answer: bayda
+    options:
+      - { id: bayda, label: "@person.bayda" }
+      - { id: zgurska, label: "@person.marta" }
+      - { id: veis, label: "@person.veis" }
+      - { id: prokopchuk, label: "@person.nelya" }
+      - { id: dorosh, label: "@person.dorosh" }
+
+docs:
+  # ---------- Конверт В: папір ----------
+  - id: 4-01
+    label: 4-01
+    title: "@doc.4-01.title"
+    medium: paper
+    section: C
+    sheet: 21
+    dept: A
+    component: LogTable
+    props:
+      intro: "@doc.4-01.intro"
+      columns: ["@doc.4-01.c.date", "@doc.4-01.c.payee", "@doc.4-01.c.purpose", "@doc.4-01.c.sum", "@doc.4-01.c.signed"]
+    levels:
+      trainee:
+        note: "@doc.4-01.note.trainee"
+        rows:
+          - ["14.09.2026", "ФОП Смачна хата", "@doc.4-01.p.catering", "18 400,00", "Згурська М. І."]
+          - ["31.01.2026", "ТОВ «Реставр-Поділля»", "@doc.4-01.p.restore", "12 000,00", "Прокопчук Н. В."]
+          - ["28.02.2026", "ТОВ «Реставр-Поділля»", "@doc.4-01.p.restore", "12 250,00", "Прокопчук Н. В."]
+          - ["31.03.2026", "ТОВ «Реставр-Поділля»", "@doc.4-01.p.restore", "12 500,00", "Прокопчук Н. В."]
+          - ["30.04.2026", "ТОВ «Реставр-Поділля»", "@doc.4-01.p.restore", "12 750,00", "Прокопчук Н. В."]
+          - ["29.05.2026", "ТОВ «Реставр-Поділля»", "@doc.4-01.p.restore", "13 000,00", "Прокопчук Н. В."]
+          - ["30.06.2026", "ТОВ «Реставр-Поділля»", "@doc.4-01.p.restore", "13 250,00", "Прокопчук Н. В."]
+          - ["31.07.2026", "ТОВ «Реставр-Поділля»", "@doc.4-01.p.restore", "13 500,00", "Прокопчук Н. В."]
+          - ["31.08.2026", "ТОВ «Реставр-Поділля»", "@doc.4-01.p.restore", "13 750,00", "Прокопчук Н. В."]
+      detective:
+        rows:
+          - ["14.09.2026", "ФОП Смачна хата", "@doc.4-01.p.catering", "18 400,00", "Згурська М. І."]
+          - ["31.01.2024", "ТОВ «Реставр-Поділля»", "@doc.4-01.p.restore", "6 000,00", "Прокопчук Н. В."]
+          - ["31.03.2025", "ТОВ «Реставр-Поділля»", "@doc.4-01.p.restore", "9 500,00", "Прокопчук Н. В."]
+          - ["31.08.2026", "ТОВ «Реставр-Поділля»", "@doc.4-01.p.restore", "13 750,00", "Прокопчук Н. В."]
+        note: "@doc.4-01.note.detective"
+  - { id: 4-04, label: 4-04, title: "@doc.4-04.title", medium: paper, section: C, sheet: 22, dept: A, component: DraftAct, props: { header: "@doc.4-04.header", body: "@doc.4-04.body", struck: "2 628", over: "2 840", note: "@doc.4-04.note" } }
+  - id: 4-07
+    label: 4-07
+    title: "@doc.4-07.title"
+    medium: paper
+    section: C
+    sheet: 22
+    dept: O
+    component: PhotoPrint
+    props: { src: img/4-07-safe.jpg, caption: "@doc.4-07.caption", code: 407, codeCaption: "@doc.4-07.codeCaption" }
+    levels:
+      trainee: { note: "@doc.4-07.note.trainee" }
+      detective: { note: "@doc.4-07.note.detective" }
+  - id: 4-08
+    label: 4-08
+    title: "@doc.4-08.title"
+    medium: paper
+    section: C
+    sheet: 23
+    component: TaskSheet
+    props: { number: 4, tasks: [Z6, Z8, Z11], codes: [490, 407, 492] }
+    levels:
+      trainee: { intro: "@sheet4.intro.trainee", data: "@sheet4.data.trainee" }
+      detective: { intro: "@sheet4.intro.detective", data: "@sheet4.data.detective" }
+
+  # ---------- Конверт Г (вкладений): папір ----------
+  - id: 4-09
+    label: 4-09
+    title: "@doc.4-09.title"
+    medium: paper
+    section: D
+    sheet: 24
+    dept: A
+    component: NotebookPage
+    props: { heading: "@doc.4-09.heading", margin: "@doc.4-09.margin", code: 492, codeCaption: "@doc.4-09.codeCaption" }
+    levels:
+      trainee: { cipher: "$solve:cipherTrainee" }
+      detective: { cipher: "$solve:cipherDetective", marginExtra: "@doc.4-09.marginExtra" }
+  - { id: 4-10, label: 4-10, title: "@doc.4-10.title", medium: paper, section: D, sheet: 24, dept: A, component: Letter, props: { from: "@doc.4-10.from", to: "@doc.4-10.to", body: "@doc.4-10.body", signature: "@doc.4-10.signature" } }
+
+  # ---------- Конверт В: застосунок ----------
+  - { id: 4-02, label: 4-02, title: "@doc.4-02.title", medium: app, open: true, section: C, dept: A, component: OfficialAct, props: { header: "@doc.4-02.header", body: "@doc.4-02.body", signature: "@doc.4-02.signature" } }
+  - id: 4-03
+    label: 4-03
+    title: "@doc.4-03.title"
+    medium: app
+    open: true
+    section: C
+    dept: A
+    component: LogTable
+    props:
+      intro: "@doc.4-03.intro"
+      columns: ["@doc.4-03.c.date", "@doc.4-03.c.item", "@doc.4-03.c.work", "@doc.4-03.c.by"]
+      rows:
+        - ["03.2024", "КН-0412 «Самовар»", "@doc.4-03.w.clean", "ФОП Корж Д. О."]
+        - ["11.2024", "КН-0877 «Підсвічник»", "@doc.4-03.w.solder", "ФОП Корж Д. О."]
+        - ["06.2025", "КН-1203 «Годинник каміновий»", "@doc.4-03.w.mech", "ФОП Корж Д. О."]
+        - ["04.2026", "КН-0019 «Печатка магістрату»", "@doc.4-03.w.clean", "ФОП Корж Д. О."]
+      note: "@doc.4-03.note"
+  - id: 4-05
+    label: 4-05
+    title: "@doc.4-05.title"
+    medium: app
+    open: true
+    section: C
+    dept: A
+    component: LogTable
+    props:
+      intro: "@doc.4-05.intro"
+      columns: ["@doc.4-05.c.time", "@doc.4-05.c.point", "@doc.4-05.c.card", "@doc.4-05.c.event"]
+      rows:
+        - ["12.09 23:26", "@doc.4-05.p.service", "002 · Згурська М. І.", "@doc.4-05.e.in"]
+        - ["12.09 23:48", "@doc.4-05.p.service", "002 · Згурська М. І.", "@doc.4-05.e.out"]
+        - ["13.09 02:11", "@doc.4-05.p.service", "017 · Гайовий О. М.", "@doc.4-05.e.in"]
+        - ["13.09 02:14", "@doc.4-05.p.safe", "—", "@doc.4-05.e.wrong"]
+        - ["13.09 02:15", "@doc.4-05.p.safe", "—", "@doc.4-05.e.wrong"]
+        - ["13.09 02:16", "@doc.4-05.p.safe", "—", "@doc.4-05.e.lock"]
+        - ["13.09 02:20", "@doc.4-05.p.service", "017 · Гайовий О. М.", "@doc.4-05.e.out"]
+  - { id: 4-06, label: 4-06, title: "@doc.4-06.title", medium: app, open: true, section: C, dept: O, component: PhotoPrint, props: { src: img/4-06-cctv.jpg, caption: "@doc.4-06.caption", note: "@doc.4-06.note" } }
+  - { id: 4-11, label: 4-11, title: "@doc.4-11.title", medium: app, open: true, section: D, dept: A, component: PhotoPrint, props: { src: img/4-11-orest-1974.jpg, caption: "@doc.4-11.caption" } }
+
+  # ---------- Цифрові докази акту 4 ----------
+  - { id: C12, label: Ц-12, title: "@doc.C12.title", medium: app, section: C, dept: A, component: Transcript, props: { body: "@doc.C12.body" } }
+  - { id: C14, label: Ц-14, title: "@doc.C14.title", medium: app, section: C, dept: A, component: Transcript, props: { body: "@doc.C14.body" } }

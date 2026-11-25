@@ -1,0 +1,261 @@
+# Акт 2 «Підміна». Додається до case.yaml під час збирання (масиви доповнюються, шлюзи зливаються).
+# Числа — з tools/solve.mjs: density.rhoVitrine 8.45, density.goldGramsMissing 302, insurance.declaredEur 1100.
+
+tasks:
+  - id: Z3
+    label: З-3
+    depts: [K, A]
+    title: "@task.z3.title"
+    visibleWhen: { unlocked: "section:A" }
+    question: { trainee: "@task.z3.q.trainee", detective: "@task.z3.q.detective" }
+    gate: B
+    spec:
+      trainee: { kind: number, min: 8.40, max: 8.50, step: 0.01 }
+      detective: { kind: number, min: 270, max: 335, step: 1 }
+    hints:
+      trainee: ["@task.z3.h.trainee.1", "@task.z3.h.trainee.2", "@task.z3.h.trainee.3"]
+      detective: ["@task.z3.h.detective.1", "@task.z3.h.detective.2", "@task.z3.h.detective.3"]
+  - id: Z7
+    label: З-7
+    depts: [A]
+    title: "@task.z7.title"
+    visibleWhen: { unlocked: "section:A" }
+    question: { trainee: "@task.z7.q.trainee", detective: "@task.z7.q.detective" }
+    unit: €
+    optional: true
+    spec:
+      trainee: { kind: number, min: 1090, max: 1110, step: 1 }
+      detective: { kind: number, min: 1090, max: 1110, step: 1 }
+    hints:
+      trainee: ["@task.z7.h.trainee.1", "@task.z7.h.trainee.2", "@task.z7.h.trainee.3"]
+      detective: ["@task.z7.h.detective.1", "@task.z7.h.detective.2", "@task.z7.h.detective.3"]
+    onSolved: "@task.z7.solved"
+
+gates:
+  B: { task: Z3, payload: { message: "@gate.b.message", unlock: ["section:B"] } }
+
+decisions:
+  - id: R3
+    label: Р3
+    prompt: "@r3.prompt"
+    deadlineGate: B
+    defaultOption: b
+    options:
+      - id: a
+        label: "@r3.opt.a"
+        effects:
+          - { set: korzh_detained, value: true }
+          - { set: killer_relaxed, value: true }
+          - { message: "@r3.after.a" }
+      - id: b
+        label: "@r3.opt.b"
+        effects:
+          - { set: swap_hint, value: true }
+          - { message: "@r3.after.b" }
+      - id: c
+        label: "@r3.opt.c"
+        requires: { flag: korzh_interviewed }
+        effects:
+          - { set: swap_hint, value: true }
+          - { set: korzh_ally, value: true }
+          - { unlock: C-KORZH }
+          - { message: "@r3.after.c" }
+  - id: R3release
+    label: Р3+
+    prompt: "@r3release.prompt"
+    context: "@r3release.context"
+    available: { flag: korzh_detained, equals: true }
+    options:
+      - id: release
+        label: "@r3release.opt"
+        effects:
+          - { set: korzh_detained, value: false }
+          - { set: killer_relaxed, value: false }
+          - { set: korzh_released, value: true }
+          - { set: swap_hint, value: true }
+          - { message: "@r3release.after" }
+  - id: R7
+    label: Р7
+    prompt: "@r7.prompt"
+    deadlineGate: B
+    defaultOption: c
+    options:
+      - id: a
+        label: "@r7.opt.a"
+        effects:
+          - { set: dorosh_exposed, value: true }
+          - { set: bayda_alert, value: true }
+          - { unlock: C13 }
+          - { message: "@r7.after.a" }
+      - id: b
+        label: "@r7.opt.b"
+        effects:
+          - { set: trap_set, value: true }
+          - { message: "@r7.after.b" }
+      - id: c
+        label: "@r7.opt.c"
+        effects:
+          - { set: leak, value: true }
+          - { message: "@r7.after.c" }
+
+events:
+  - id: E-R3
+    at: { onCode: [212], afterGate: A, plusMin: 8 }
+    requires: { unlocked: "section:A" }
+    message: "@er3.message"
+    decision: R3
+  - id: E-R7
+    at: { onCode: [214], afterGate: A, plusMin: 12 }
+    requires: { unlocked: "section:A" }
+    message: "@er7.message"
+    decision: R7
+
+codes:
+  - { code: 212, action: { decision: R3 } }
+  - { code: 214, action: { decision: R7 } }
+  - { code: 290, action: { task: Z3 } }
+  - { code: 291, action: { task: Z7 } }
+
+db:
+  - { keys: [гайовий, гайовий орест, гайовий орест михайлович], title: "@db.orest.title", body: "@db.orest.body" }
+  - { keys: [згурська, згурська марта, згурська марта ігорівна], title: "@db.marta.title", body: "@db.marta.body" }
+  - { keys: [прокопчук, прокопчук неля, прокопчук неля василівна], title: "@db.nelya.title", body: "@db.nelya.body" }
+  - { keys: [луговий, луговий степан, луговий степан петрович], title: "@db.stepan.title", body: "@db.stepan.body" }
+  - { keys: [корж, корж давид, корж давид олександрович], title: "@db.korzh.title", body: "@db.korzh.body" }
+  - { keys: [байда, байда роман, байда роман степанович], title: "@db.bayda.title", body: "@db.bayda.body" }
+  - { keys: [вейс, вейс аркадій, вейс аркадій львович], title: "@db.veis.title", body: "@db.veis.body" }
+  - { keys: [дорош, дорош клим, дорош клим васильович], title: "@db.dorosh.title", body: "@db.dorosh.body" }
+  - { keys: [гайова, гайова ірина, гайова ірина андріївна], title: "@db.iryna.title", body: "@db.iryna.body" }
+  - { keys: [ВХ 4717 АК], title: "@db.car.nelya.title", body: "@db.car.nelya.body" }
+  - { keys: [ВХ 4787 АІ], title: "@db.car.korzh.title", body: "@db.car.korzh.body" }
+  - { keys: [ВХ 0001 ВВ], title: "@db.car.bayda.title", body: "@db.car.bayda.body" }
+  - { keys: [ВХ 5550 АЕ], title: "@db.car.veis.title", body: "@db.car.veis.body" }
+  - { keys: [Байда-Буд, "39814456"], title: "@db.co.baydabud.title", body: "@db.co.baydabud.body" }
+  - { keys: [Відродження Старокаменя, "41220873"], title: "@db.co.fund.title", body: "@db.co.fund.body" }
+  - { keys: [Поділля-Гарант, "30521977"], title: "@db.co.garant.title", body: "@db.co.garant.body" }
+  - { keys: [Реставр-Поділля, "43611205"], title: "@db.co.restavr.title", body: "@db.co.restavr.body" }
+
+docs:
+  # ---------- Конверт А: папір ----------
+  - id: 2-02
+    label: 2-02
+    title: "@doc.2-02.title"
+    medium: paper
+    section: A
+    sheet: 13
+    dept: A
+    component: InventoryCard
+    props:
+      number: КН-1147
+      name: "@doc.2-02.name"
+      yearStained: "16_7"
+      rows:
+        - ["@doc.2-02.k.author", "@doc.2-02.v.author"]
+        - ["@doc.2-02.k.material", "@doc.2-02.v.material"]
+        - ["@doc.2-02.k.size", "Ø 182 мм"]
+        - ["@doc.2-02.k.mass", "2 840 г"]
+        - ["@doc.2-02.k.volume", "@doc.2-02.v.volume"]
+        - ["@doc.2-02.k.received", "@doc.2-02.v.received"]
+      checks: "@doc.2-02.checks"
+      photo: img/astrolabe.jpg
+  - id: 2-04
+    label: 2-04
+    title: "@doc.2-04.title"
+    medium: paper
+    section: A
+    sheet: 13
+    dept: K
+    component: OfficialAct
+    props: { header: "@doc.2-04.header", body: "@doc.2-04.body", signature: "@doc.2-04.signature", stamp: "@doc.2-04.stamp" }
+  - id: 2-07
+    label: 2-07
+    title: "@doc.2-07.title"
+    medium: paper
+    section: A
+    sheet: 14
+    dept: A
+    component: OfficialAct
+    props: { header: "@doc.2-07.header", body: "@doc.2-07.body", signature: "@doc.2-07.signature", stamp: "@doc.2-07.stamp" }
+  - id: 2-12
+    label: 2-12
+    title: "@doc.2-12.title"
+    medium: paper
+    section: A
+    sheet: 14
+    dept: K
+    component: FingerprintReport
+    props: { header: "@doc.2-12.header", body: "@doc.2-12.body", signature: "@doc.2-12.signature", code: 212, codeCaption: "@doc.2-12.codeCaption" }
+  - id: 2-13
+    label: 2-13
+    title: "@doc.2-13.title"
+    medium: paper
+    section: A
+    sheet: 15
+    dept: O
+    component: DossierCards
+    props:
+      cards:
+        - { name: "@person.bayda", born: "11.04.1974", role: "@card.bayda.role", address: "@card.bayda.address", car: "@card.bayda.car", notes: "@card.bayda.notes", photo: img/p-bayda.jpg }
+        - { name: "@person.veis", born: "02.12.1962", role: "@card.veis.role", address: "@card.veis.address", car: "@card.veis.car", notes: "@card.veis.notes", photo: img/p-veis.jpg }
+        - { name: "@person.dorosh", born: "19.07.1977", role: "@card.dorosh.role", address: "@card.dorosh.address", car: "@card.dorosh.car", notes: "@card.dorosh.notes", photo: img/p-dorosh.jpg }
+  - id: 2-14
+    label: 2-14
+    title: "@doc.2-14.title"
+    medium: paper
+    section: A
+    sheet: 15
+    dept: O
+    component: Clipping
+    props: { paper: "@paper.name", date: "@doc.2-14.date", headline: "@doc.2-14.headline", body: "@doc.2-14.body", code: 214, codeCaption: "@doc.2-14.codeCaption" }
+  - id: 2-15
+    label: 2-15
+    title: "@doc.2-15.title"
+    medium: paper
+    section: A
+    sheet: 16
+    component: TaskSheet
+    props: { number: 2, tasks: [Z3, Z7], codes: [290, 291] }
+    levels:
+      trainee: { intro: "@sheet2.intro.trainee", data: "@sheet2.data.trainee" }
+      detective: { intro: "@sheet2.intro.detective", data: "@sheet2.data.detective" }
+
+  # ---------- Конверт А: застосунок ----------
+  - { id: 2-01, label: 2-01, title: "@doc.2-01.title", medium: app, open: true, section: A, dept: A, component: Letter, props: { from: "@doc.2-01.from", to: "@doc.2-01.to", body: "@doc.2-01.body", signature: "@doc.2-01.signature" } }
+  - { id: 2-03, label: 2-03, title: "@doc.2-03.title", medium: app, open: true, section: A, dept: K, component: OfficialAct, props: { header: "@doc.2-03.header", body: "@doc.2-03.body", signature: "@doc.2-03.signature" } }
+  - id: 2-06
+    label: 2-06
+    title: "@doc.2-06.title"
+    medium: app
+    open: true
+    section: A
+    dept: A
+    component: LogTable
+    props:
+      intro: "@doc.2-06.intro"
+      columns: ["@doc.2-06.c.date", "@doc.2-06.c.in", "@doc.2-06.c.out", "@doc.2-06.c.card", "@doc.2-06.c.note"]
+      rows:
+        - ["04.08.2026", "10:05", "10:40", "017 · Гайовий О. М.", ""]
+        - ["12.08.2026", "14:20", "14:35", "002 · Згурська М. І.", ""]
+        - ["25.08.2026", "09:10", "09:55", "017 · Гайовий О. М.", "@doc.2-06.n.check"]
+        - ["29.08.2026", "19:40", "20:05", "017 · Гайовий О. М.", "@doc.2-06.n.visitor"]
+        - ["02.09.2026", "11:00", "11:20", "009 · Прокопчук Н. В.", "@doc.2-06.n.balance"]
+        - ["07.09.2026", "10:15", "10:50", "009 · Прокопчук Н. В. + 002 · Згурська М. І.", "@doc.2-06.n.weigh"]
+        - ["13.09.2026", "12:10", "12:40", "002 · Згурська М. І.", "@doc.2-06.n.police"]
+  - { id: 2-08, label: 2-08, title: "@doc.2-08.title", medium: app, open: true, section: A, dept: A, component: Letter, props: { from: "@doc.2-08.from", to: "@doc.2-08.to", body: "@doc.2-08.body", signature: "@doc.2-08.signature" } }
+  - id: 2-09
+    label: 2-09
+    title: "@doc.2-09.title"
+    medium: app
+    open: true
+    section: A
+    dept: A
+    component: OfficialAct
+    props: { header: "@doc.2-09.header", body: "@doc.2-09.body.trainee", signature: "@doc.2-09.signature", stamp: "@doc.2-09.stamp" }
+    levels:
+      detective: { body: "@doc.2-09.body.detective" }
+  - { id: 2-10, label: 2-10, title: "@doc.2-10.title", medium: app, open: true, section: A, dept: A, component: Transcript, props: { body: "@doc.2-10.body" } }
+  - { id: 2-11, label: 2-11, title: "@doc.2-11.title", medium: app, open: true, section: A, dept: A, component: Clipping, props: { paper: "@doc.2-11.paper", date: "@doc.2-11.date", headline: "@doc.2-11.headline", body: "@doc.2-11.body" } }
+
+  # ---------- Цифрові докази акту 2 (за рішеннями) ----------
+  - { id: C-KORZH, label: Ц-К, title: "@doc.C-KORZH.title", medium: app, section: A, dept: K, component: Transcript, props: { body: "@doc.C-KORZH.body" } }
+  - { id: C13, label: Ц-13, title: "@doc.C13.title", medium: app, section: A, dept: O, component: Transcript, props: { body: "@doc.C13.body" } }

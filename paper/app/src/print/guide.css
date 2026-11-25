@@ -1,0 +1,56 @@
+/* Посібник ведучого: звичайний документ А4 із полями (на відміну від аркушів комплекту без полів). */
+@page guide { size: A4; margin: 14mm 15mm 18mm; }
+
+.guide {
+  page: guide;
+  box-sizing: border-box;
+  width: 210mm;
+  margin: 8mm auto;
+  padding: 14mm 15mm;
+  background: #fff;
+  color: #1d1d1d;
+  font: 10.5pt/1.4 'PT Serif', Georgia, serif;
+}
+@media print {
+  .guide { width: auto; margin: 0; padding: 0; }
+}
+
+.guide h1, .guide h2, .guide h3 { font-family: 'PT Sans Narrow', 'Arial Narrow', sans-serif; break-after: avoid; }
+.guide h1 { font-size: 28pt; margin: 0 0 4mm; }
+.guide h2 { font-size: 16pt; margin: 8mm 0 3mm; border-bottom: 0.4mm solid #1d1d1d; padding-bottom: 1mm; }
+.guide h3 { font-size: 12pt; margin: 5mm 0 1.5mm; }
+.guide p { margin: 0 0 2mm; }
+.guide ul { margin: 0 0 2mm; padding-left: 5mm; }
+
+.guide__break { break-before: page; }
+.guide__break > h2 { margin-top: 0; }
+.guide__case { font-family: 'PT Sans Narrow', sans-serif; letter-spacing: 0.08em; text-transform: uppercase; margin: 0; }
+.guide__warn { color: #9b1c1c; font-weight: 700; }
+.guide__access { display: flex; align-items: center; gap: 8mm; margin: 6mm 0 2mm; }
+.guide__access figure { margin: 0; text-align: center; font-size: 9pt; }
+.guide__code { flex: 1; border: 0.6mm solid #1d1d1d; padding: 4mm 5mm; display: flex; flex-direction: column; gap: 1mm; }
+.guide__code span { font-family: 'PT Sans Narrow', sans-serif; text-transform: uppercase; letter-spacing: 0.06em; font-size: 9pt; }
+.guide__code strong { font-family: 'Courier Prime', monospace; font-size: 16pt; }
+.guide__code small { color: #555; }
+.guide__url { font-family: 'Courier Prime', monospace; font-size: 9pt; color: #555; margin-bottom: 5mm; }
+.guide__muted { color: #555; font-size: 9.5pt; }
+.guide__task { break-inside: avoid; margin-bottom: 3mm; }
+
+.guide table { width: 100%; border-collapse: collapse; margin: 2mm 0 3mm; font-size: 9.5pt; }
+.guide th, .guide td { border: 0.25mm solid #999; padding: 1.2mm 2mm; text-align: left; vertical-align: top; }
+.guide th { background: #eee; font-family: 'PT Sans Narrow', sans-serif; }
+.guide tr { break-inside: avoid; }
+
+.guide__depts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; font-size: 9pt; }
+.guide__depts ul { list-style: none; padding: 0; }
+.guide__depts li { margin-bottom: 1mm; }
+
+.guide-status { font: 14pt/1.4 'PT Sans Narrow', sans-serif; text-align: center; padding: 20mm; background: #fff; }
+
+/* Правила гри: вступ поруч із QR старту */
+.guide--rules .guide__access { align-items: flex-start; }
+.guide__intro { flex: 1; }
+.guide--rules h2 { margin-top: 5mm; break-after: avoid; }
+/* розділи правил можуть переходити на наступну сторінку — без порожніх пів сторінок */
+.guide--rules .guide__task { break-inside: auto; }
+.guide--rules p { orphans: 3; widows: 3; }

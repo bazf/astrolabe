@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.DS_Store
+*.local
+print/out/
+InspirationVideo/
+.superpowers/
+app/src/generated/
+release/
+release.local.json
+*.tsbuildinfo

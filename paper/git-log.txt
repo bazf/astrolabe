@@ -1,0 +1,171 @@
+3596027 2026-11-19 release: summary lists the rules PDF
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+98963a1 2026-11-19 Правила гри: екран «Як грати» і PDF без спойлерів
+- uk/rules.yaml: що потрібно, комплект, застосунок, хід гри, рішення, фінал і рахунок, рівні, режими, кілька телефонів, поради, ведучому
+- застосунок: екран #/rules, посилання на першому й головному екранах
+- друк: «Справа № 17 — правила гри.pdf» (3 с., QR старту), входить у PRINT_FILES
+- тест вмісту стежить, щоб у правилах не було розгадок
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+41460b3 2026-11-18 art: tower clock, wristwatch and Tymur's fireworks series show 10:10 to match the 22:10 story
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+72fb8c7 2026-11-18 story: the clocks stop at 22:10 instead of 23:17 — staged-minute events shifted by 67 minutes (awards, fireworks, Tymur's series, photo report, Korzh's SMS and wait), the trap still points only at Korzh, 38 strikes by 22:10, the time-of-death window widened to 21:30, bible version 3.7
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+a37b74f 2026-11-18 art: forensic photo of the broken watch (plain dial, scale, evidence marker) and a faded 1974 snapshot with a flat astrolabe
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+3f0aafa 2026-11-18 art: realistic photos from ChatGPT — twelve portraits from believable sources (police file, staff badge, press, a colleague's phone) and a real-looking CCTV frame
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+eb9ac25 2026-11-18 feat(print): PDFs named in Ukrainian as in the game — «Справа № 17 — комплект «Стажер»/«Слідчий»», «Справа № 17 — посібник ведучого»; stale PDFs removed, the release ships exactly these three
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+68e3c6e 2026-11-18 fix(stage6): review findings — the service worker never rewrites the cached page and bypasses the HTTP cache, the host console locks when left, the release site has no print pages and its leak check reads the deobfuscated strings, default host code compared canonically, the trap counts as proof against Bayda with an honest review line, one link per decision, one envelope per sheet is validated, setup tips for offline phones
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+0cf7d5c 2026-11-18 fix(ui): readable deadline on the decision banner
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+2f722c8 2026-11-18 fix(art): the sergeant's photo shows the body a few metres from the tower's base; bible version 3.6 with blind playthrough results; stop tracking tsbuildinfo
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+cfa7667 2026-11-18 fix(balance): every decision shows its situation, message feed by game minute with full text, Dorosh exposed after the trap, Z1 points to Ц-02 from R1 on, small text fixes; release script with leak check
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+62209e1 2026-11-18 fix(balance): blind playthrough findings — pending decisions and urgent tasks shown on every screen, a gate warns which decisions the investigator will take, six minutes for the toxicologist, interview reminder, newest envelope only, Z1 hints name Ц-02, no gendered hints about the killer, epilogue explains a hidden scheme and a dead witness
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+b620f43 2026-11-18 fix(print): the tower section fits its half sheet with the −1,60 mark and a title; print check catches content clipped inside a half and labels cut by a drawing's edge
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+0801365 2026-11-18 feat(stage6): works offline — build writes a service worker that caches the game and its photos, new builds replace the cache; web manifest and icons
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+d60c893 2026-11-18 feat(stage6): printed host guide — host code and QR, preparation and envelope contents, departments layout, briefing, timeline, the solution, answers, decisions, scoring; the console shows the solution too
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+9a5296f 2026-11-18 feat(stage6): blind playthrough tool — the real app in headless Edge with a game clock, envelopes revealed by game state, ruler and zoom; hide act 2–3 tasks until their envelopes
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+47a86dd 2026-11-18 fix(stage5): review findings — events at their due time, explicit decisions beat merge defaults, trigger-only interviews, validated join links, host code hardening, UI fixes
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+1bad4ba 2026-11-18 feat(stage5): host console with encrypted answers, timeline and gate opening; stage 5 e2e scenarios and bible notes
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+3d1e103 2026-11-18 feat(stage5): departments mode — badges in archive and print, department filter, required departments on tasks, voting with a group lead
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+b0f2422 2026-11-18 feat(stage5): 60-minute game — clock from 25:00, envelope A open, R1 decided, free hints for skipped tasks
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+ce999df 2026-11-18 feat(stage5): share a team's game between phones by QR or link
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+d42db24 2026-11-18 feat(stage5): action log with merge and replay; several teams on one device
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+5f06f4e 2026-11-18 fix(act4): freeze the ending after the accusation, Stepan's fate, accusation order and gating, warrant unlocks the safe; act 4 photos
+- reducer ignores everything but reading messages once the accusation is made
+- accusation opens per case condition (operation done, second group decided)
+- Stepan lives only if protected or hidden; pending poisoning ends in death
+- accusation options sorted alphabetically; place labels equally detailed
+- Z6/Z8 visible after envelope V, Z11 after envelope G
+- clearLock effect: the warrant lifts the 5-minute safe lock
+- date-shaped codes (16.11.74) accepted for number answers
+- decision screen shows messages inside conditional effects
+- review blames the alert only when the killer fled to the station
+- photos 4-06, 4-07, 4-11; station text no longer assumes Veis is free
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+3a4d5c5 2026-11-18 feat(act4): the tower and the finale — envelopes В and Г, safe, cipher, operation, accusation, epilogue
+- engine: task-specific locks, conditions on solved/fired/level/hints, accusation, epilogue on five axes with score and review
+- content: ledger (Z6), safe (gate D, warrant alternative), cipher (Z11), Marta deal, operation with a bonus second group,
+  Veis trap consequence, court route for Solomiya's recording
+- documents: draft act with struck mass, notebook page with solver-injected cipher
+- app: accusation and newspaper epilogue screens
+- print: sheets 21–24 (24 total); e2e plays the whole case to the epilogue
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+34092a4 2026-11-18 fix(act3): review findings — branch tasks only inside their branch, one call per decision, gate C spoiler
+- Z10 is refused before the poisoning and after the death (reducer and task screen)
+- a decision is called once even when several events can raise it; pending list deduplicated
+- route answer no longer mentions the stopped clock; witness time, weather date, shadow hint fixed
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+0e1a688 2026-11-18 feat(act3): the clock lies — envelope B, gate C, Iryna/Solomiya/Stepan decisions, poisoning branch
+- engine: events waiting for minute and gate, conditional effects, branch-only tasks
+  with effects, scheduled events honouring conditions
+- content: 13 documents, Z4 (gate C), Z5 shadow, Z9 route, Z10 thermos under a 3-minute timer
+- sun table on task sheet 3 injected from the solver; phone lookup in the database
+- print: sheets 17–20; e2e covers act 3 and the poisoning rescue
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+d82516c 2026-11-18 fix(act2): review findings — visible decision deadlines, forgiving database queries, timeline and spoiler fixes
+- a decision whose call has not sounded fires at the gate instead of defaulting silently;
+  ignored decisions default with an inbox notice; reducer validates open decisions and options
+- database queries ignore legal forms, initials and word order; opens with envelope A
+- storage log entry moved after the 11:20 report; gate B no longer hints at the forged act;
+  Korzh no longer states the gate answer; Veis age, nephew's patronymic, typos
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+5adf661 2026-11-18 feat(act2): substitution act — envelope A, gate B, Korzh and Dorosh decisions, police database
+- engine: code-triggered events, events N min after a gate, always-available decisions
+- content: act files merged into case.yaml; 15 documents; Z3 (gate B), Z7
+- documents: inventory card with coffee stain, official acts, fingerprints, logs, letters
+- app: police database (exact, hashed queries), decision banners
+- print: sheets 13–16; e2e covers act 2
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+5482bb8 2026-11-17 fix: review findings — tab sync, print URL guard, answer lock, surname tolerance
+- adopt progress written by another tab (storage event)
+- print refuses to run without PUBLIC_APP_URL (ALLOW_PLACEHOLDER_URL=1 for test prints)
+- 30 s pause after every third wrong answer to stop free guessing
+- text answers ignore punctuation, Latin lookalikes and initials
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+3824493 2026-11-17 test(e2e): act 1 playthrough on mobile and multiboard
+Fixes found by the run: Cyrillic envelope labels, favicon 404,
+figure margins on the forensic photo. Bible aligned with
+implementation rulings.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+1e0163e 2026-11-17 feat(assets): act 1 photos and prompts
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+48b43c7 2026-11-17 feat(print): A4 kit sheets 01–12 with QR codes
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+bccbae1 2026-11-17 feat(app): act 1 playable flow
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+25dde35 2026-11-17 feat(documents): act 1 document components and measured maps
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+6c10426 2026-11-17 chore: separate typecheck for app and tooling
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+44cab88 2026-11-17 feat(engine): game state reducer, timed events, persistence
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+a5b5f8b 2026-11-17 feat(content): act 1 case content and build pipeline
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+2007e32 2026-11-17 feat(shared): answer normalization and sealed gate payloads
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+678b864 2026-11-17 chore: scaffold project, case bible, solver and slice plan
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
