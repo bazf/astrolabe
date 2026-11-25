@@ -1,0 +1,42 @@
+# Геометрія карт. Метри, x — схід, y — північ, початок — двері годинникової вежі.
+# Відстані до вежі мають збігатися з tools/solve.mjs → trap (перевіряє build-content.test.ts).
+town:
+  scale: 10000
+  bounds: { minX: -450, maxX: 750, minY: -1300, maxY: 450 }
+  latitude: "49°25′ пн. ш."
+  parkHours: "07:00–24:00"
+  station: { dir: [1, 0.55], label: "@map.station" }
+  points:
+    tower: { x: 0, y: 0, label: "@map.tower" }
+    museum: { x: -39, y: -46, label: "@map.museum" }
+    stage: { x: -300, y: 335, label: "@map.stage" }
+    crowd: { x: -320, y: 344, label: "@map.crowd" }
+    restaurant: { x: 420, y: 323, label: "@map.restaurant" }
+    hotel: { x: -150, y: -161, label: "@map.hotel" }
+    shop: { x: 636, y: -636, label: "@map.shop" }
+    orestFlat: { x: -250, y: -312, label: "@map.orestFlat" }
+    nelyaHome: { x: 200, y: -1170, label: "@map.nelyaHome" }
+    korzhWorkshop: { x: -380, y: -980, label: "@map.korzhWorkshop" }
+  routes:
+    viaPark: { points: [[0, 0], [0, -120], [60, -280], [260, -520], [120, -800], [230, -1000], [200, -1170]] }
+    aroundPark: { points: [[0, 0], [0, -120], [480, -220], [560, -700], [520, -1170], [200, -1170]] }
+  areas:
+    rynok: { label: "@map.rynok", points: [[-90, -90], [90, -90], [90, 90], [-90, 90]] }
+    zamkova: { label: "@map.zamkova", points: [[-420, 260], [-180, 260], [-180, 420], [-420, 420]] }
+    park: { label: "@map.park", points: [[40, -260], [400, -300], [420, -1040], [60, -1060], [20, -600]] }
+    pond: { label: "@map.pond", points: [[580, -820], [700, -840], [720, -960], [600, -990], [560, -900]] }
+  streets:
+    - { name: "@map.st.rynkova", points: [[0, -120], [0, 90]] }
+    - { name: "@map.st.zamkova", points: [[-180, 300], [90, 60], [636, -636], [700, -760]] }
+    - { name: "@map.st.sadova", points: [[520, -1170], [-300, -1170]] }
+    - { name: "@map.st.parkova", points: [[0, -120], [480, -220], [560, -700], [520, -1170]] }
+    - { name: "@map.st.hotelna", points: [[-150, -161], [-250, -312], [-380, -980]] }
+    - { name: "@map.st.kashtanova", points: [[90, 90], [420, 323]] }
+square:
+  scale: 1000
+  points:
+    tower: { x: 0, y: 0, label: "@map.tower" }
+    museumDoor: { x: -38.6, y: -46.0, label: "@plan.museumDoor" }
+    chapel: { x: 38.6, y: 46.0, label: "@plan.chapel" }
+    well: { x: 17.8, y: -25.4, label: "@plan.well" }
+    sundial: { x: -23.0, y: 12.0, label: "@plan.sundial" }

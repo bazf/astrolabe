@@ -1,0 +1,32 @@
+{
+  "name": "investigator-board-game",
+  "private": true,
+  "workspaces": [
+    "app",
+    "tools"
+  ],
+  "scripts": {
+    "dev": "npm run content && npm run dev -w app",
+    "build": "npm run content && npm run build -w app",
+    "test": "vitest run",
+    "solve": "npm run solve -w tools",
+    "content": "node --experimental-strip-types --no-warnings tools/build-content.ts",
+    "typecheck": "tsc -p tsconfig.json && tsc -b app",
+    "print": "npm run build && node --experimental-strip-types --no-warnings tools/build-print.ts",
+    "e2e": "npm run build && node --experimental-strip-types --no-warnings tools/e2e-act1.ts",
+    "release": "node --experimental-strip-types --no-warnings tools/release.ts",
+    "paper": "npm run content && node --experimental-strip-types --no-warnings tools/paper/build-paper.ts"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/react": "^16.3.3",
+    "@types/node": "^22.20.5",
+    "@types/pngjs": "^6.0.5",
+    "jsdom": "^26.1.0",
+    "jsqr": "^1.4.0",
+    "playwright-core": "^1.65.1",
+    "pngjs": "^7.0.0",
+    "vitest": "^3.2.7",
+    "yaml": "^2.9.1"
+  }
+}

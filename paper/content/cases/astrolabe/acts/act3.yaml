@@ -1,0 +1,316 @@
+# Акт 3 «Годинник бреше». Числа — з tools/solve.mjs: clock.realStop 00:40, shadow.answer 17:10,
+# route.leftCentreAt 00:45 / aroundParkMin 22.8, thermos.drunkMg 1.44 / mgPerKg 0.0157.
+
+tasks:
+  - id: Z4
+    label: З-4
+    depts: [K]
+    title: "@task.z4.title"
+    visibleWhen: { unlocked: "section:B" }
+    question: { trainee: "@task.z4.q.trainee", detective: "@task.z4.q.detective" }
+    gate: C
+    spec:
+      trainee: { kind: time, min: "00:35", max: "00:45" }
+      detective: { kind: time, min: "00:35", max: "00:45" }
+    hints:
+      trainee: ["@task.z4.h.trainee.1", "@task.z4.h.trainee.2", "@task.z4.h.trainee.3"]
+      detective: ["@task.z4.h.detective.1", "@task.z4.h.detective.2", "@task.z4.h.detective.3"]
+  - id: Z5
+    label: З-5
+    depts: [O]
+    title: "@task.z5.title"
+    visibleWhen: { unlocked: "section:B" }
+    question: { trainee: "@task.z5.q", detective: "@task.z5.q" }
+    spec:
+      trainee: { kind: time, min: "17:00", max: "17:20" }
+      detective: { kind: time, min: "17:00", max: "17:20" }
+    hints:
+      trainee: ["@task.z5.h.1", "@task.z5.h.trainee.2", "@task.z5.h.trainee.3"]
+      detective: ["@task.z5.h.1", "@task.z5.h.detective.2", "@task.z5.h.detective.3"]
+    onSolved: "@task.z5.solved"
+  - id: Z9
+    label: З-9
+    depts: [O]
+    title: "@task.z9.title"
+    visibleWhen: { unlocked: "section:B" }
+    question: { trainee: "@task.z9.q.trainee", detective: "@task.z9.q.detective" }
+    spec:
+      trainee: { kind: number, min: 21, max: 25, step: 1 }
+      detective: { kind: time, min: "00:40", max: "00:50" }
+    hints:
+      trainee: ["@task.z9.h.1", "@task.z9.h.trainee.2", "@task.z9.h.trainee.3"]
+      detective: ["@task.z9.h.1", "@task.z9.h.detective.2", "@task.z9.h.detective.3"]
+    onSolved: "@task.z9.solved"
+  - id: Z10
+    label: З-10
+    depts: [K]
+    title: "@task.z10.title"
+    question: { trainee: "@task.z10.q.trainee", detective: "@task.z10.q.detective" }
+    visibleWhen: { all: [{ flag: poisoned }, { not: { flag: stepan_dead } }] }
+    urgent: true
+    spec:
+      trainee: { kind: number, min: 1.40, max: 1.48, step: 0.01 }
+      detective: { kind: number, min: 0.0150, max: 0.0165, step: 0.0001 }
+    hints:
+      trainee: ["@task.z10.h.1", "@task.z10.h.trainee.2", "@task.z10.h.trainee.3"]
+      detective: ["@task.z10.h.1", "@task.z10.h.detective.2", "@task.z10.h.detective.3"]
+    effects:
+      - { set: stepan_saved, value: true }
+    onSolved: "@task.z10.solved"
+
+gates:
+  C: { task: Z4, payload: { message: "@gate.c.message", unlock: ["section:C", "C07"] } }
+
+decisions:
+  - id: R4
+    label: Р4
+    prompt: "@r4.prompt"
+    deadlineGate: C
+    defaultOption: c
+    options:
+      - id: a
+        label: "@r4.opt.a"
+        effects:
+          - { set: iryna_public, value: true }
+          - { schedule: E-IRYNA, afterMin: 10 }
+          - { message: "@r4.after.a" }
+      - id: b
+        label: "@r4.opt.b"
+        effects:
+          - { set: iryna_trust, value: true }
+          - { unlock: C09 }
+          - { message: "@r4.after.b" }
+      - id: c
+        label: "@r4.opt.c"
+        effects:
+          - { message: "@r4.after.c" }
+  - id: R6
+    label: Р6
+    prompt: "@r6.prompt"
+    deadlineGate: C
+    defaultOption: b
+    options:
+      - id: a
+        label: "@r6.opt.a"
+        effects:
+          - { unlock: C08 }
+          - { schedule: E-STORY, afterMin: 15 }
+          - { message: "@r6.after.a" }
+      - id: b
+        label: "@r6.opt.b"
+        effects:
+          - { set: solomiya_refused, value: true }
+          - { message: "@r6.after.b" }
+      - id: c
+        label: "@r6.opt.c"
+        requires: { flag: korzh_ally }
+        effects:
+          - { unlock: C08 }
+          - { set: solomiya_exclusive, value: true }
+          - { message: "@r6.after.c" }
+  - id: R5
+    label: Р5
+    prompt: "@r5.prompt"
+    deadlineGate: D
+    defaultOption: c
+    options:
+      - id: a
+        label: "@r5.opt.a"
+        effects:
+          - { unlock: C10 }
+          - { set: stepan_protected, value: true }
+          - { set: killer_alert, value: true }
+          - { message: "@r5.after.a" }
+      - id: b
+        label: "@r5.opt.b"
+        effects:
+          - { unlock: C10b }
+          - { set: killer_alert, value: true }
+          - if: { flag: iryna_trust }
+            then:
+              - { set: stepan_safe, value: true }
+              - { message: "@r5.after.b.safe" }
+            else:
+              - { schedule: E4, afterMin: 8 }
+              - { message: "@r5.after.b.risk" }
+      - id: c
+        label: "@r5.opt.c"
+        effects:
+          - { schedule: E4, afterMin: 8 }
+          - { message: "@r5.after.c" }
+      - id: d
+        label: "@r5.opt.d"
+        requires: { flag: stepan_contacted }
+        effects:
+          - { set: stepan_fled, value: true }
+          - { message: "@r5.after.d" }
+
+events:
+  - id: E-R4
+    at: { onCode: [313], afterGate: B, plusMin: 6 }
+    requires: { unlocked: "section:B" }
+    message: "@er4.message"
+    decision: R4
+  - id: E2
+    at: { minute: 40, afterGate: B }
+    message: "@e2.message"
+    decision: R6
+  - id: E3a
+    at: { afterGate: C }
+    requires: { flag: stepan_contacted }
+    message: "@e3.message"
+    decision: R5
+  - id: E3b
+    at: { afterGate: C, plusMin: 3 }
+    requires: { not: { flag: stepan_contacted } }
+    message: "@e3.message"
+    decision: R5
+  - id: E-IRYNA
+    at: { scheduled: true }
+    message: "@eiryna.message"
+    effects:
+      - { set: iryna_injured, value: true }
+  - id: E-STORY
+    at: { scheduled: true }
+    message: "@estory.message"
+    effects:
+      - { set: story_published, value: true }
+      - { set: bayda_alert, value: true }
+      - { set: killer_alert, value: true }
+  - id: E4
+    at: { scheduled: true }
+    message: "@e4.message"
+    effects:
+      - { set: poisoned, value: true }
+      - { unlock: C15 }
+      - { schedule: E4-DEAD, afterMin: 6 }
+  - id: E4-DEAD
+    at: { scheduled: true }
+    requires: { not: { flag: stepan_saved } }
+    message: "@e4dead.message"
+    effects:
+      - { set: stepan_dead, value: true }
+
+codes:
+  - { code: 305, action: { task: Z5 } }
+  - { code: 313, action: { decision: R4 } }
+  - { code: 390, action: { task: Z4 } }
+  - { code: 391, action: { task: Z5 } }
+  - { code: 392, action: { task: Z9 } }
+  - { code: 393, action: { task: Z10 } }
+
+db:
+  - { keys: ["+380 97 314 08 52"], title: "@db.phone.nelya.title", body: "@db.phone.nelya.body" }
+  - { keys: ["+380 50 442 77 13"], title: "@db.phone.korzh.title", body: "@db.phone.korzh.body" }
+  - { keys: ["+380 63 205 19 90"], title: "@db.phone.solomiya.title", body: "@db.phone.solomiya.body" }
+  - { keys: ["+380 67 100 00 01"], title: "@db.phone.bayda.title", body: "@db.phone.bayda.body" }
+  - { keys: ["+380 66 718 33 04"], title: "@db.phone.iryna.title", body: "@db.phone.iryna.body" }
+  - { keys: [тирса, тирса соломія, тирса соломія андріївна], title: "@db.solomiya.title", body: "@db.solomiya.body" }
+  - { keys: [савка, савка тимур, савка тимур олегович], title: "@db.tymur.title", body: "@db.tymur.body" }
+  - { keys: [барвінок, барвінок лев, барвінок лев йосипович], title: "@db.barvinok.title", body: "@db.barvinok.body" }
+
+docs:
+  # ---------- Конверт Б: папір ----------
+  - id: 3-01
+    label: 3-01
+    title: "@doc.3-01.title"
+    medium: paper
+    section: B
+    sheet: 17
+    dept: K
+    component: LogTable
+    props:
+      intro: "@doc.3-01.intro"
+      columns: ["@doc.3-01.c.when", "@doc.3-01.c.what", "@doc.3-01.c.going", "@doc.3-01.c.strike"]
+      rows:
+        - ["11.09, 18:00", "@doc.3-01.r.wind", "0", "0"]
+        - ["12.09, 09:30", "@doc.3-01.r.check", "1,86 м", "1,77 м"]
+        - ["12.09, 18:00", "@doc.3-01.r.wind2", "0", "0"]
+      signature: "@doc.3-01.signature"
+    levels:
+      trainee: { note: "@doc.3-01.note.trainee" }
+      detective: { note: "@doc.3-01.note.detective" }
+  - { id: 3-02, label: 3-02, title: "@doc.3-02.title", medium: paper, section: B, sheet: 17, dept: K, component: OfficialAct, props: { header: "@doc.3-02.header", body: "@doc.3-02.body", signature: "@doc.3-02.signature" } }
+  - { id: 3-03, label: 3-03, title: "@doc.3-03.title", medium: paper, section: B, sheet: 18, dept: K, component: PhotoPrint, props: { src: img/3-03-mechanism.jpg, caption: "@doc.3-03.caption" } }
+  - { id: 3-05, label: 3-05, title: "@doc.3-05.title", medium: paper, section: B, sheet: 18, dept: O, component: PhotoPrint, props: { src: img/3-05-tower-day.jpg, caption: "@doc.3-05.caption", note: "@doc.3-05.note", code: 305, codeCaption: "@doc.3-05.codeCaption" } }
+  - id: 3-13
+    label: 3-13
+    title: "@doc.3-13.title"
+    medium: paper
+    section: B
+    sheet: 19
+    dept: O
+    component: DossierCards
+    props:
+      cards:
+        - { name: "@person.iryna", born: "14.03.2005", role: "@card.iryna.role", address: "@card.iryna.address", car: "@card.iryna.car", notes: "@card.iryna.notes", photo: img/p-iryna.jpg, code: 313, codeCaption: "@card.iryna.codeCaption" }
+  - id: 3-10
+    label: 3-10
+    title: "@doc.3-10.title"
+    medium: paper
+    section: B
+    sheet: 19
+    dept: O
+    component: DossierCards
+    props:
+      cards:
+        - { name: "@person.solomiya", born: "06.05.1992", role: "@card.solomiya.role", address: "@card.solomiya.address", car: "@card.solomiya.car", notes: "@card.solomiya.notes", photo: img/p-solomiya.jpg }
+        - { name: "@person.tymur", born: "28.02.2009", role: "@card.tymur.role", address: "@card.tymur.address", car: "@card.tymur.car", notes: "@card.tymur.notes", photo: img/p-tymur.jpg }
+        - { name: "@person.barvinok", born: "17.01.1954", role: "@card.barvinok.role", address: "@card.barvinok.address", car: "@card.barvinok.car", notes: "@card.barvinok.notes", photo: img/p-barvinok.jpg }
+  - id: 3-11
+    label: 3-11
+    title: "@doc.3-11.title"
+    medium: paper
+    section: B
+    sheet: 20
+    component: TaskSheet
+    props: { number: 3, tasks: [Z4, Z5, Z9], codes: [390, 391, 392] }
+    levels:
+      trainee: { intro: "@sheet3.intro.trainee", data: "@sheet3.data.trainee", table: { title: "@sheet3.table.trainee", columns: ["@sheet3.col.time", "@sheet3.col.ratio"], rows: "$solve:sunRatio" } }
+      detective: { intro: "@sheet3.intro.detective", data: "@sheet3.data.detective", table: { title: "@sheet3.table.detective", columns: ["@sheet3.col.time", "@sheet3.col.altitude"], rows: "$solve:sunAltitude" } }
+
+  # ---------- Конверт Б: застосунок ----------
+  - { id: 3-04, label: 3-04, title: "@doc.3-04.title", medium: app, open: true, section: B, dept: O, component: OfficialAct, props: { header: "@doc.3-04.header", body: "@doc.3-04.body", signature: "@doc.3-04.signature" } }
+  - { id: 3-07, label: 3-07, title: "@doc.3-07.title", medium: app, open: true, section: B, dept: O, component: Transcript, props: { body: "@doc.3-07.body" } }
+  - { id: 3-08, label: 3-08, title: "@doc.3-08.title", medium: app, open: true, section: B, dept: O, component: Transcript, props: { body: "@doc.3-08.body" } }
+  - id: 3-09
+    label: 3-09
+    title: "@doc.3-09.title"
+    medium: app
+    open: true
+    section: B
+    dept: A
+    component: LogTable
+    props:
+      intro: "@doc.3-09.intro"
+      columns: ["@doc.3-09.c.time", "@doc.3-09.c.zone", "@doc.3-09.c.event"]
+      rows:
+        - ["12.09 22:00", "@doc.3-09.z.all", "@doc.3-09.e.armed"]
+        - ["13.09 00:39", "@doc.3-09.z.back", "@doc.3-09.e.open"]
+        - ["13.09 00:47", "@doc.3-09.z.back", "@doc.3-09.e.close"]
+        - ["13.09 07:58", "@doc.3-09.z.all", "@doc.3-09.e.disarmed"]
+      note: "@doc.3-09.loans"
+  - { id: 3-12, label: 3-12, title: "@doc.3-12.title", medium: app, open: true, section: B, dept: K, component: OfficialAct, props: { header: "@doc.3-12.header", body: "@doc.3-12.body", signature: "@doc.3-12.signature" } }
+
+  # ---------- Цифрові докази акту 3 ----------
+  - id: C07
+    label: Ц-07
+    title: "@doc.C07.title"
+    medium: app
+    section: B
+    dept: A
+    component: LogTable
+    props:
+      intro: "@doc.C07.intro"
+      columns: ["@doc.C07.c.time", "@doc.C07.c.type", "@doc.C07.c.party", "@doc.C07.c.note"]
+      rows:
+        - ["05.09 21:14", "@doc.C07.t.mail", "s.tyrsa@starokamin.today", "@doc.C07.n.mail"]
+        - ["12.09 21:43", "SMS", "+380 50 442 77 13", ""]
+        - ["12.09 23:58", "@doc.C07.t.in", "+380 97 314 08 52", "47 с"]
+        - ["13.09 00:31", "@doc.C07.t.data", "—", "@doc.C07.n.data"]
+        - ["13.09 00:38", "@doc.C07.t.reg", "@doc.C07.cell", "@doc.C07.n.last"]
+  - { id: C08, label: Ц-08, title: "@doc.C08.title", medium: app, section: B, dept: O, component: Transcript, props: { body: "@doc.C08.body" } }
+  - { id: C09, label: Ц-09, title: "@doc.C09.title", medium: app, section: B, dept: O, component: Transcript, props: { body: "@doc.C09.body" } }
+  - { id: C10, label: Ц-10, title: "@doc.C10.title", medium: app, section: B, dept: O, component: Transcript, props: { body: "@doc.C10.body" } }
+  - { id: C10b, label: Ц-10б, title: "@doc.C10b.title", medium: app, section: B, dept: O, component: Transcript, props: { body: "@doc.C10b.body" } }
+  - { id: C15, label: Ц-15, title: "@doc.C15.title", medium: app, section: B, dept: K, component: OfficialAct, props: { header: "@doc.C15.header", body: "@doc.C15.body", signature: "@doc.C15.signature" } }

@@ -1,0 +1,276 @@
+# Маніфест справи «Астролябія». Тексти — у uk/*.yaml (посилання «@ключ»).
+# Числа відповідей — з tools/solve.mjs.
+id: astrolabe
+title: "@case.title"
+hintPenaltyMin: 3
+deadlineNotice: "@deadline.notice"
+
+tasks:
+  - id: Z1
+    label: З-1
+    depts: [K, O]
+    title: "@task.z1.title"
+    question: { trainee: "@task.z1.q.trainee", detective: "@task.z1.q.detective" }
+    unit: м/с
+    gate: A
+    spec:
+      trainee: { kind: number, min: 1.6, max: 1.9, step: 0.1 }
+      detective: { kind: number, min: 1.6, max: 1.9, step: 0.1 }
+    hints:
+      trainee: ["@task.z1.h.trainee.1", "@task.z1.h.trainee.2", "@task.z1.h.trainee.3"]
+      detective: ["@task.z1.h.detective.1", "@task.z1.h.detective.2", "@task.z1.h.detective.3"]
+  - id: Z2
+    label: З-2
+    depts: [O]
+    title: "@task.z2.title"
+    question: { trainee: "@task.z2.q", detective: "@task.z2.q" }
+    optional: true
+    spec:
+      trainee: { kind: choice, options: { korzh: [корж, давид корж, корж давид, давид, корж давид олександрович] } }
+      detective: { kind: choice, options: { korzh: [корж, давид корж, корж давид, давид, корж давид олександрович] } }
+    hints:
+      trainee: ["@task.z2.h.1", "@task.z2.h.2", "@task.z2.h.3"]
+      detective: ["@task.z2.h.1", "@task.z2.h.2.detective", "@task.z2.h.3"]
+    onSolved: "@task.z2.solved"
+
+# Пульт ведучого: код друкується в посібнику ведучого (під час збирання його можна замінити змінною HOST_CODE).
+host:
+  code: "сова-маятник-3907"
+  gatePenaltyMin: 10
+
+# Правила гри без спойлерів (тексти — uk/rules.yaml): екран «Як грати» і PDF.
+rules:
+  title: "@rules.title"
+  intro: "@rules.intro"
+  sections:
+    - { title: "@rules.need.title", body: "@rules.need.body" }
+    - { title: "@rules.kit.title", body: "@rules.kit.body" }
+    - { title: "@rules.app.title", body: "@rules.app.body" }
+    - { title: "@rules.play.title", body: "@rules.play.body" }
+    - { title: "@rules.decisions.title", body: "@rules.decisions.body" }
+    - { title: "@rules.finale.title", body: "@rules.finale.body" }
+    - { title: "@rules.levels.title", body: "@rules.levels.body" }
+    - { title: "@rules.modes.title", body: "@rules.modes.body" }
+    - { title: "@rules.devices.title", body: "@rules.devices.body" }
+    - { title: "@rules.tips.title", body: "@rules.tips.body" }
+    - { title: "@rules.host.title", body: "@rules.host.body" }
+
+# Скорочена партія на 60 хв (біблія, розд. 5): перший акт видано розкритим.
+short:
+  offsetMin: 25
+  gate: A
+  decide: { R1: a }
+  optional: [Z2, Z7, Z9]
+
+gates:
+  A: { task: Z1, payload: { message: "@gate.a.message", unlock: ["section:A"] } }
+
+decisions:
+  - id: R1
+    label: Р1
+    prompt: "@r1.prompt"
+    deadlineGate: A
+    defaultOption: a
+    options:
+      - id: a
+        label: "@r1.opt.a"
+        effects:
+          - { set: bayda_alert, value: true }
+          - { set: interviewQuota, value: 2 }
+          - { unlock: C02 }
+          - { message: "@r1.after.a" }
+      - id: b
+        label: "@r1.opt.b"
+        effects:
+          - { set: case_closed, value: true }
+          - { set: bayda_alert, value: true }
+          - { set: interviewQuota, value: 2 }
+          - { penaltyMin: 5 }
+          - { schedule: E1reopen, afterMin: 3 }
+          - { message: "@r1.after.b" }
+      - id: c
+        label: "@r1.opt.c"
+        effects:
+          - { set: interviewQuota, value: 1 }
+          - { unlock: C02 }
+          - { message: "@r1.after.c" }
+
+events:
+  - id: E1
+    at: { minute: 8, onCode: [114, 115, 116, 117] }
+    message: "@e1.message"
+    decision: R1
+    effects:
+      - { unlock: C01 }
+  - id: E1reopen
+    at: { scheduled: true }
+    message: "@e1reopen.message"
+    effects:
+      - { set: case_closed, value: false }
+      - { unlock: C02b }
+
+codes:
+  - { code: 0, action: { start: true } }
+  - { code: 114, action: { interview: marta } }
+  - { code: 115, action: { interview: nelya } }
+  - { code: 116, action: { interview: stepan } }
+  - { code: 117, action: { interview: korzh } }
+  - { code: 190, action: { task: Z1 } }
+  - { code: 191, action: { task: Z2 } }
+
+interviews:
+  - id: marta
+    doc: C03
+    who: "@person.marta"
+    flags: {}
+    lines:
+      - { who: "@who.kruk", text: "@int.marta.1" }
+      - { who: "@person.marta", text: "@int.marta.2" }
+      - { who: "@who.kruk", text: "@int.marta.3" }
+      - { who: "@person.marta", text: "@int.marta.4" }
+      - { who: "@who.kruk", text: "@int.marta.5" }
+      - { who: "@person.marta", text: "@int.marta.6" }
+      - { who: "@who.kruk", text: "@int.marta.7" }
+      - { who: "@person.marta", text: "@int.marta.8" }
+  - id: nelya
+    doc: C04
+    who: "@person.nelya"
+    flags: {}
+    lines:
+      - { who: "@who.kruk", text: "@int.nelya.1" }
+      - { who: "@person.nelya", text: "@int.nelya.2" }
+      - { who: "@who.kruk", text: "@int.nelya.3" }
+      - { who: "@person.nelya", text: "@int.nelya.4" }
+      - { who: "@who.kruk", text: "@int.nelya.5" }
+      - { who: "@person.nelya", text: "@int.nelya.6" }
+      - { who: "@who.kruk", text: "@int.nelya.7" }
+      - { who: "@person.nelya", text: "@int.nelya.8" }
+  - id: stepan
+    doc: C05
+    who: "@person.stepan"
+    flags: { stepan_contacted: true }
+    lines:
+      - { who: "@who.kruk", text: "@int.stepan.1" }
+      - { who: "@person.stepan", text: "@int.stepan.2" }
+      - { who: "@who.kruk", text: "@int.stepan.3" }
+      - { who: "@person.stepan", text: "@int.stepan.4" }
+      - { who: "@who.kruk", text: "@int.stepan.5" }
+      - { who: "@person.stepan", text: "@int.stepan.6" }
+  - id: korzh
+    doc: C06
+    who: "@person.korzh"
+    flags: { korzh_interviewed: true }
+    lines:
+      - { who: "@who.kruk", text: "@int.korzh.1" }
+      - { who: "@person.korzh", text: "@int.korzh.2" }
+      - { who: "@who.kruk", text: "@int.korzh.3" }
+      - { who: "@person.korzh", text: "@int.korzh.4" }
+      - { who: "@who.kruk", text: "@int.korzh.5" }
+      - { who: "@person.korzh", text: "@int.korzh.6" }
+
+docs:
+  # ---------- Папка ----------
+  - { id: P00, label: П-00, title: "@doc.P00.title", medium: paper, section: start, sheet: 1, component: Cover, props: { code: 0 } }
+  - { id: P01, label: П-01, title: "@doc.P01.title", medium: paper, section: start, sheet: 1, component: RulesCard, props: { body: "@doc.P01.body" } }
+  - id: P02
+    label: П-02
+    title: "@doc.P02.title"
+    medium: paper
+    section: start
+    sheet: 2
+    component: BriefingLetter
+    props: { body: "@doc.P02.body", victim: { name: "@person.orest", born: "@victim.born", role: "@victim.role", bio: "@victim.bio", photo: img/p-orest.jpg } }
+  - { id: P03, label: П-03, title: "@doc.P03.title", medium: paper, section: start, sheet: 3, dept: A, component: CipherDisk, props: { alphabet: АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ } }
+
+  # ---------- Стартовий конверт ----------
+  - { id: 1-01, label: 1-01, title: "@doc.1-01.title", medium: paper, section: start, sheet: 4, dept: K, component: Protocol, props: { header: "@doc.1-01.header", body: "@doc.1-01.body", signature: "@doc.1-01.signature" } }
+  - { id: 1-02, label: 1-02, title: "@doc.1-02.title", medium: paper, section: start, sheet: 5, dept: K, component: PhotoPrint, props: { src: img/1-02-clock.jpg, caption: "@doc.1-02.caption" } }
+  - { id: 1-03, label: 1-03, title: "@doc.1-03.title", medium: paper, section: start, sheet: 5, dept: K, component: PhotoPrint, props: { src: img/1-03-watch.jpg, caption: "@doc.1-03.caption" } }
+  - { id: 1-04, label: 1-04, title: "@doc.1-04.title", medium: paper, section: start, sheet: 6, dept: K, component: PhotoPrint, props: { src: img/1-04-square.jpg, caption: "@doc.1-04.caption" } }
+  - id: 1-05
+    label: 1-05
+    title: "@doc.1-05.title"
+    medium: paper
+    section: start
+    sheet: 7
+    dept: K
+    component: ExpertReport
+    props: { header: "@doc.1-05.header", body: "@doc.1-05.body", signature: "@doc.1-05.signature" }
+    levels:
+      trainee: { extra: "@doc.1-05.extra.trainee" }
+      detective: {}
+  - { id: 1-06, label: 1-06, title: "@doc.1-06.title", medium: paper, section: start, sheet: 8, dept: K, component: TowerSection, props: { note: "@doc.1-06.note" } }
+  - { id: 1-07, label: 1-07, title: "@doc.1-07.title", medium: paper, section: start, sheet: 8, dept: K, component: SpecSheet, props: { body: "@doc.1-07.body" } }
+  - { id: 1-08, label: 1-08, title: "@doc.1-08.title", medium: paper, section: start, sheet: 7, dept: K, component: SpeedTable, props: { rows: ["@doc.1-08.r1", "@doc.1-08.r2", "@doc.1-08.r3"], note: "@doc.1-08.note" } }
+  - { id: 1-09, label: 1-09, title: "@doc.1-09.title", medium: app, open: true, section: start, dept: O, component: Clipping, props: { paper: "@paper.name", date: "@doc.1-09.date", headline: "@doc.1-09.headline", body: "@doc.1-09.body" } }
+  - id: 1-10
+    label: 1-10
+    title: "@doc.1-10.title"
+    medium: paper
+    section: start
+    sheet: 6
+    dept: O
+    component: PhotoPrint
+    props: { src: img/1-10-fireworks-a.jpg, src2: img/1-10-fireworks-b.jpg, caption: "@doc.1-10.caption", exif: ["@doc.1-10.exif1", "@doc.1-10.exif2"] }
+  - id: 1-11
+    label: 1-11
+    title: "@doc.1-11.title"
+    medium: app
+    open: true
+    section: start
+    dept: O
+    component: PhotoReport
+    props:
+      intro: "@doc.1-11.intro"
+      items:
+        - { time: "22:09:10", source: "@doc.1-11.i1.source", text: "@doc.1-11.i1.text" }
+        - { time: "22:09:20", source: "@doc.1-11.i2.source", text: "@doc.1-11.i2.text" }
+        - { time: "22:11:02", source: "@doc.1-11.i3.source", text: "@doc.1-11.i3.text" }
+        - { time: "22:10:20", source: "@doc.1-11.i4.source", text: "@doc.1-11.i4.text" }
+        - { time: "22:08:00", source: "@doc.1-11.i5.source", text: "@doc.1-11.i5.text" }
+  - { id: 1-12, label: 1-12, title: "@doc.1-12.title", medium: paper, section: start, sheet: 9, dept: O, component: TownMap, props: {} }
+  - { id: 1-13, label: 1-13, title: "@doc.1-13.title", medium: paper, section: start, sheet: 10, dept: O, component: SquarePlan, props: {} }
+  - id: 1-14
+    label: 1-14
+    title: "@doc.1-14.title"
+    medium: paper
+    section: start
+    sheet: 11
+    dept: O
+    component: DossierCards
+    props:
+      cards:
+        - { name: "@person.marta", born: "15.02.1980", role: "@card.marta.role", address: "@card.marta.address", car: "@card.marta.car", notes: "@card.marta.notes", photo: img/p-zgurska.jpg, code: 114 }
+        - { name: "@person.nelya", born: "22.06.1982", role: "@card.nelya.role", address: "@card.nelya.address", car: "@card.nelya.car", notes: "@card.nelya.notes", photo: img/p-prokopchuk.jpg, code: 115 }
+  - id: 1-15
+    label: 1-15
+    title: "@doc.1-15.title"
+    medium: paper
+    section: start
+    sheet: 11
+    dept: O
+    component: DossierCards
+    props:
+      cards:
+        - { name: "@person.stepan", born: "09.10.1987", role: "@card.stepan.role", address: "@card.stepan.address", car: "@card.stepan.car", notes: "@card.stepan.notes", photo: img/p-luhovyi.jpg, code: 116 }
+        - { name: "@person.korzh", born: "30.01.1965", role: "@card.korzh.role", address: "@card.korzh.address", car: "@card.korzh.car", notes: "@card.korzh.notes", photo: img/p-korzh.jpg, code: 117 }
+  - id: 1-17
+    label: 1-17
+    title: "@doc.1-17.title"
+    medium: paper
+    section: start
+    sheet: 12
+    component: TaskSheet
+    props: { number: 1, tasks: [Z1, Z2], codes: [190, 191] }
+    levels:
+      trainee: { intro: "@sheet1.intro.trainee", data: "@sheet1.data.trainee" }
+      detective: { intro: "@sheet1.intro.detective", data: "@sheet1.data.detective" }
+
+  # ---------- Цифрові докази акту 1 ----------
+  - { id: C01, label: Ц-01, title: "@doc.C01.title", medium: app, section: start, component: Transcript, props: { body: "@e1.message" } }
+  - { id: C02, label: Ц-02, title: "@doc.C02.title", medium: app, section: start, dept: K, component: ForensicPhoto, props: { src: img/c-02-paving.jpg, tiles: 9, caption: "@doc.C02.caption" } }
+  - { id: C02b, label: Ц-02б, title: "@doc.C02b.title", medium: app, section: start, dept: K, component: ForensicPhoto, props: { src: img/c-02-paving.jpg, tiles: 9, oblique: true, caption: "@doc.C02b.caption" } }
+  - { id: C03, label: Ц-03, title: "@doc.C03.title", medium: app, section: start, dept: O, component: InterviewRecord, props: { interview: marta } }
+  - { id: C04, label: Ц-04, title: "@doc.C04.title", medium: app, section: start, dept: O, component: InterviewRecord, props: { interview: nelya } }
+  - { id: C05, label: Ц-05, title: "@doc.C05.title", medium: app, section: start, dept: O, component: InterviewRecord, props: { interview: stepan } }
+  - { id: C06, label: Ц-06, title: "@doc.C06.title", medium: app, section: start, dept: O, component: InterviewRecord, props: { interview: korzh } }

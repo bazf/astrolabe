@@ -1,0 +1,78 @@
+@page { size: A4; margin: 0; }
+html, body { margin: 0; padding: 0; background: #888; }
+.kit { display: flex; flex-direction: column; align-items: center; gap: 8mm; padding: 8mm 0; }
+@media print {
+  html, body { background: #fff; }
+  .kit { gap: 0; padding: 0; }
+}
+
+.sheet {
+  position: relative;
+  width: 210mm;
+  height: 297mm;
+  padding: 10mm;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: #fff;
+  break-after: page;
+  page-break-after: always;
+  display: flex;
+  flex-direction: column;
+  gap: 6mm;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.sheet .doc { box-shadow: none; font-size: 10.5pt; }
+.sheet .typed { font-size: 10pt; }
+.sheet__footer { position: absolute; left: 10mm; right: 10mm; bottom: 4mm; font: 7pt 'PT Sans Narrow', sans-serif; color: #999; text-align: right; }
+
+/* Лінії різу */
+.cut { outline: 0.25mm dashed #9a9a9a; outline-offset: 1.5mm; }
+
+/* Повний аркуш */
+.sheet--full .sheet__slot { flex: 1; display: flex; flex-direction: column; }
+.sheet--full .sheet__slot > .doc { flex: 1; }
+.map-sheet { display: flex; flex-direction: column; align-items: center; }
+.map-sheet__title { font: 700 12pt 'PT Serif', serif; margin: 0 0 3mm; align-self: flex-start; }
+
+/* Дві половини */
+.sheet--halves .sheet__slot { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.sheet--halves .sheet__slot > * { flex: 1; }
+.sheet--halves .sheet__slot + .sheet__slot { border-top: 0.25mm dashed #9a9a9a; padding-top: 5mm; }
+
+/* Фото 15 × 10 */
+.sheet--photos { align-items: center; justify-content: space-around; }
+.sheet--photos .sheet__slot { width: 160mm; }
+.sheet--photos .photo-print img,
+.sheet--photos .photo-print .photo-missing { height: 100mm; aspect-ratio: auto; }
+.sheet--photos .photo-print__frames--two img,
+.sheet--photos .photo-print__frames--two .photo-missing { height: 100mm; }
+
+/* Картки А6 */
+.sheet__cards { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 6mm; height: 100%; }
+.sheet__cards .dossier-cards { display: contents; }
+.sheet__cards .dossier { outline: 0.25mm dashed #9a9a9a; outline-offset: 2.5mm; font-size: 9.5pt; overflow: hidden; }
+
+/* Обкладинка + правила + наклейки */
+.sheet__cover { height: 100mm; }
+.sheet__cover .doc { height: 100%; box-sizing: border-box; }
+.sheet__labels-row { display: grid; grid-template-columns: 95mm 1fr; gap: 6mm; flex: 1; min-height: 0; }
+.sheet__rules .doc { font-size: 9pt; height: 100%; box-sizing: border-box; }
+.envelope-labels { display: grid; grid-auto-rows: 1fr; gap: 5mm; }
+.envelope-label { display: grid; grid-template-columns: 24mm 1fr; align-items: center; gap: 3mm; padding: 2mm 3mm; border: 0.4mm solid #2a1f12; background: #f3ead6; }
+.envelope-label__id { font: 700 17pt 'PT Serif', serif; text-align: center; color: #8c1c13; }
+.envelope-label__title { font: 700 11pt 'PT Sans Narrow', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; }
+.envelope-label__note { font-size: 13pt; }
+.sheet__cards > .doc { outline: 0.25mm dashed #9a9a9a; outline-offset: 2.5mm; font-size: 9.5pt; overflow: hidden; }
+.sheet .task-sheet__notes { height: 9mm; }
+.sheet .task-sheet__task { margin-top: 0.4em; padding-top: 0.4em; }
+.sheet .task-sheet .code-tag { margin: 0.3em 0; }
+.sheet .data-table table { font-size: 7.5pt; }
+.sheet--halves .photo-print img, .sheet--halves .photo-print .photo-missing { height: 85mm; aspect-ratio: auto; object-fit: cover; }
+
+/* Значок відділу в куті документа (режим «Відділи»; на «Змагання» не впливає). */
+.sheet__slot { position: relative; }
+.dept-mark { position: absolute; top: -2mm; right: -2mm; z-index: 1; display: grid; place-items: center; width: 6mm; height: 6mm; border-radius: 50%; font: 700 3.2mm/1 'PT Sans Narrow', sans-serif; color: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.dept-mark--K { background: #8a3b2e; }
+.dept-mark--A { background: #2f5d8a; }
+.dept-mark--O { background: #3d6b3a; }
